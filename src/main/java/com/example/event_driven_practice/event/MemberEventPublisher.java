@@ -1,5 +1,7 @@
 package com.example.event_driven_practice.event;
 
+import com.example.event_driven_practice.domain.Member;
+import com.example.event_driven_practice.domain.NotificationType;
 import com.example.event_driven_practice.service.EmailService;
 import com.example.event_driven_practice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 @Component
 public class MemberEventPublisher {
 
-    private final NoticeService noticeService;
-
     private final EmailService emailService;
+
+    private final NoticeService noticeService;
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -44,16 +46,13 @@ public class MemberEventPublisher {
         log.info("event end");
     }
 
-
     @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @EventListener(MemberEvent.class)
-    public void publishNoticeEvent(MemberEvent memberEvent){
-        log.info("notice start");
-        //회원가입 후 이메일이 전송이 되면 다음으로 알림이 뜨는 방식.
-        noticeService.onMemberCreatedNotify(memberEvent);
-        log.info("notice end");
+    public void publishNotification(MemberEvent event){
+        Member member = event.getMember();
+        //회원 가입시 회원알림기능
+        noticeService.notifySave(member, NotificationType.MEMBER_JOIN,"회원 가입을 축하합니다.", member.getUserId(), "/api/member/create");
     }
 
 }

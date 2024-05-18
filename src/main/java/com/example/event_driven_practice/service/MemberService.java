@@ -59,7 +59,6 @@ public class MemberService {
         memberRepository.save(member);
         //2.회원 관련 이벤트 실행 -> 이메일 발송 /알림 기능
         applicationEventPublisher.publishEvent(new MemberEvent(member));
-
         return member;
     }
 
