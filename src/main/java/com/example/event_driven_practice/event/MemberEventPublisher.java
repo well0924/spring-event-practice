@@ -27,8 +27,7 @@ public class MemberEventPublisher {
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @EventListener(MemberEvent.class)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT,classes = {MemberEvent.class})
     public void publishEvent(MemberEvent memberEvent){
         log.info("event start");
         //이벤트 실행시 다음에 시작할 메서드 작동하기.
@@ -47,8 +46,7 @@ public class MemberEventPublisher {
     }
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @EventListener(MemberEvent.class)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT,classes = {MemberEvent.class})
     public void publishNotification(MemberEvent event){
         Member member = event.getMember();
         //회원 가입시 회원알림기능
